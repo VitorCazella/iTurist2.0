@@ -80,7 +80,7 @@ export class HomePage {
         this.map.one(GoogleMapsEvent.MAP_READY).then(() => {
           return this.map.animateCamera({
             target: myLocation.latLng,
-            zoom: 14
+            zoom: 12
           }).then(() => {
             // add a marker
             return this.map.addMarker({
@@ -108,7 +108,9 @@ export class HomePage {
         // Move the map camera to the location with animation
         return this.map.animateCamera({
           target: myLocation.latLng,
-          zoom: 16
+          zoom: 16,
+          bearing: 140,
+          duration: 2000
         }).then(() => {
           // add a marker
           return this.map.addMarker({
