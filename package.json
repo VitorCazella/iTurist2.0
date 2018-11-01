@@ -1,8 +1,8 @@
 {
   "name": "iTurist2.0",
   "version": "0.0.1",
-  "author": "Ionic Framework",
-  "homepage": "http://ionicframework.com/",
+  "author": "Vitor Antunes Cazella",
+  "homepage": "https://github.com/VitorCazella",
   "private": true,
   "scripts": {
     "start": "ionic-app-scripts serve",
@@ -28,6 +28,7 @@
     "@ionic/storage": "2.2.0",
     "cordova-android": "7.0.0",
     "cordova-browser": "5.0.4",
+    "cordova-ios": "4.5.5",
     "cordova-plugin-device": "^2.0.2",
     "cordova-plugin-googlemaps": "git+https://github.com/mapsplugin/cordova-plugin-googlemaps.git",
     "cordova-plugin-ionic-keyboard": "^2.1.3",

@@ -1,12 +1,16 @@
 <ion-header>
-  <ion-navbar>
+  <ion-navbar color="primary">
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Google Map</ion-title>
+    <ion-title>iTurist</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
-  <div #map id=map></div>
+  <div #map id=map color="secondary">
+    <button ion-button (click)="onButtonClick($event)">
+      <img src="assets/imgs/avatar.png" alt="">
+    </button>
+  </div>
 </ion-content>

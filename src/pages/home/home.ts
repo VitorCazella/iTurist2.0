@@ -5,7 +5,11 @@ import {
   GoogleMaps,
   GoogleMap,
   GoogleMapsEvent,
-  GoogleMapOptions
+  GoogleMapOptions,
+  LocationService,
+  MyLocation,
+  Marker,
+  GoogleMapsAnimation
 } from '@ionic-native/google-maps';
 
 @Component({
@@ -27,36 +31,95 @@ export class HomePage {
 
   loadMap(){
     try{
-      const latlng = { lat: -30.021136, lng: -51.191369};
+      LocationService.getMyLocation().then((myLocation: MyLocation) => {
+        //const latlng = { lat: -30.021136, lng: -51.191369};
 
-      this.mapElement = document.getElementById('map');
+        this.mapElement = document.getElementById('map');
 
-      let GoogleMapOption: GoogleMapOptions = {
-        camera:{
-          target: latlng
-        },
-        zoom: 15,
-        tilt: 30
-      }
-
-      this.map = GoogleMaps.create(this.mapElement, GoogleMapOption);
-
-      this.map.one(GoogleMapsEvent.MAP_READY).then(
-        () => {
-          alert("Mapa pronto!");
-
-          this.map.addMarker({
-            title: 'Você está aqui!',
-            icon: 'blue',
-            animation: 'DROP',
-            position: latlng
-          });
+        let GoogleMapOption: GoogleMapOptions = {
+          camera:{
+            target: myLocation.latLng
+          },
+          zoom: 10,
+          controls: {
+            'compass': true,
+            'myLocationButton': true,
+            'myLocation': true,   // (blue dot)
+            'indoorPicker': true,
+            'zoom': false,          // android only
+            'mapToolbar': true     // android only
+          },
+          styles: [
+            {
+                "featureType": "administrative",
+                "elementType": "geometry",
+                "stylers": [{"visibility": "off"}]
+              },
+              {
+                "featureType": "poi",
+                "stylers": [{"visibility": "on"}]
+              },
+              {
+                "featureType": "poi",
+                "elementType": "labels.icon"
+              },
+              {
+                "featureType": "road",
+                "elementType": "labels.icon",
+                "stylers": [{"visibility": "off"}]
+              },
+              {
+                "featureType": "transit",
+                "stylers": [{"visibility": "off"}]
+              }
+          ]
         }
-      );
 
-    }catch(error){
+        this.map = GoogleMaps.create(this.mapElement, GoogleMapOption);
+
+        this.map.one(GoogleMapsEvent.MAP_READY).then(() => {
+          return this.map.animateCamera({
+            target: myLocation.latLng,
+            zoom: 14
+          }).then(() => {
+            // add a marker
+            return this.map.addMarker({
+              icon: 'assets/imgs/avatar.png',
+              title: 'Você está aqui!',
+              snippet: '|______|',
+              position: myLocation.latLng,
+              animation: GoogleMapsAnimation.DROP
+            });
+          })
+        });
+      });
+    } catch(error){
       alert("Map Error " + error);
     };
+  }
+
+  onButtonClick() {
+    this.map.clear();
+
+    // Get the location of you
+    this.map.getMyLocation()
+      .then((myLocation: MyLocation) => {
+
+        // Move the map camera to the location with animation
+        return this.map.animateCamera({
+          target: myLocation.latLng,
+          zoom: 16
+        }).then(() => {
+          // add a marker
+          return this.map.addMarker({
+            icon: 'assets/imgs/avatar.png',
+            title: 'Você está aqui!',
+            snippet: '|______|',
+            position: myLocation.latLng,
+            animation: GoogleMapsAnimation.BOUNCE
+          });
+        })
+      });
   }
 
 }
