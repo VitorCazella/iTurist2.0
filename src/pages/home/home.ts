@@ -43,11 +43,11 @@ export class HomePage {
           zoom: 10,
           controls: {
             'compass': true,
-            'myLocationButton': true,
-            'myLocation': true,   // (blue dot)
+            'myLocationButton': false,
+            'myLocation': false,   // (blue dot)
             'indoorPicker': true,
             'zoom': false,          // android only
-            'mapToolbar': true     // android only
+            'mapToolbar': false     // android only
           },
           styles: [
             {
@@ -81,15 +81,6 @@ export class HomePage {
           return this.map.animateCamera({
             target: myLocation.latLng,
             zoom: 12
-          }).then(() => {
-            // add a marker
-            return this.map.addMarker({
-              icon: 'assets/imgs/avatar.png',
-              title: 'Você está aqui!',
-              snippet: '|______|',
-              position: myLocation.latLng,
-              animation: GoogleMapsAnimation.DROP
-            });
           })
         });
       });
@@ -109,14 +100,12 @@ export class HomePage {
         return this.map.animateCamera({
           target: myLocation.latLng,
           zoom: 16,
-          bearing: 140,
-          duration: 2000
+          duration: 500
         }).then(() => {
           // add a marker
           return this.map.addMarker({
             icon: 'assets/imgs/avatar.png',
             title: 'Você está aqui!',
-            snippet: '|______|',
             position: myLocation.latLng,
             animation: GoogleMapsAnimation.BOUNCE
           });
