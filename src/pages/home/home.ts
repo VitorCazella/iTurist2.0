@@ -67,7 +67,7 @@ export class HomePage {
                 "featureType": "road",
                 "elementType": "labels.icon",
                 "stylers": [{"visibility": "off"}]
-              },
+              },.addMarker
               {
                 "featureType": "transit",
                 "stylers": [{"visibility": "off"}]
@@ -81,7 +81,10 @@ export class HomePage {
           return this.map.animateCamera({
             target: myLocation.latLng,
             zoom: 12
-          })
+          });
+          map.addListener('click', function(event) {
+            addMarker(event.latLng);
+          });
         });
       });
     } catch(error){
@@ -108,9 +111,23 @@ export class HomePage {
             title: 'Você está aqui!',
             position: myLocation.latLng,
             animation: GoogleMapsAnimation.BOUNCE
-          });
+          }).then(this.onMarkerClick);
         })
       });
+  }
+
+  onMarkerClick(marker: Marker){
+    marker.one(GoogleMapsEvent.MARKER_CLICK).then(() => {
+      alert(marker.getTitle());
+    });
+  }
+
+  function addMarker(location) {
+    var marker = new google.maps.Marker({
+      position: location,
+      map: map
+    });
+    markers.push(marker);
   }
 
 }
