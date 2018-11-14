@@ -9,8 +9,13 @@
 
 <ion-content>
   <div #map id=map>
-    <button color="secondary" ion-button round (click)="onButtonClick($event)">
-      <img src="assets/imgs/avatar.png" alt="">
-    </button>
+    <ion-fab>
+      <button ion-fab color="dark" mini><ion-icon name="md-arrow-dropdown"></ion-icon></button>
+      <ion-fab-list>
+        <button ion-fab><ion-icon name="md-locate" (tap)="tapEvent($event)"></ion-icon></button>
+        <button ion-fab><ion-icon name="md-pin" (tap)="tap2Event($event)"></ion-icon></button>
+        <button ion-fab><ion-icon name="md-information-circle"></ion-icon></button>
+      </ion-fab-list>
+    </ion-fab>
   </div>
 </ion-content>

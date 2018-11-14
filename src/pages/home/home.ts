@@ -21,6 +21,13 @@ export class HomePage {
   map: GoogleMap;
   mapElement: HTMLElement;
 
+  markerMain = new google.maps.Marker({
+      position: myLocation.latLng,
+      icon: 'assets/imgs/avatar.png',
+      title: 'Você está aqui!',
+      animation: GoogleMapsAnimation.BOUNCE
+  });
+
   constructor(public navCtrl: NavController, public GoogleMaps: GoogleMaps) {
 
   }
@@ -83,23 +90,30 @@ export class HomePage {
             zoom: 12
           })
         });
+
+        this.map.addMarker({
+          title: 'Marcador Inicializado com Mapa',
+          icon: 'green',
+          position: { lat: -30.020290, lng: -51.190161 }
+        }).then((marker2: Marker) => this.onMarkerClick );
+
+        this.markerMain.setMap(this.map);
       });
     } catch(error){
       alert("Map Error " + error);
     };
   }
 
-  onButtonClick() {
-    this.map.clear();
+  tapEvent(e) {
+    this.markerMain.setMap(null);
 
     // Get the location of you
-    this.map.getMyLocation()
-      .then((myLocation: MyLocation) => {
+    this.map.getMyLocation().then((myLocation: MyLocation) => {
 
         // Move the map camera to the location with animation
         return this.map.animateCamera({
           target: myLocation.latLng,
-          zoom: 16,
+          zoom: 15,
           duration: 500
         }).then(() => {
           // add a marker
@@ -108,9 +122,30 @@ export class HomePage {
             title: 'Você está aqui!',
             position: myLocation.latLng,
             animation: GoogleMapsAnimation.BOUNCE
-          });
+          }).then((markerMain: Marker) => this.onMarkerClick);
         })
       });
+  }
+
+  onMarkerClick(marker : Marker){
+    marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
+      alert("Marcador : " + marker.getTitle());
+    });
+  }
+
+  tap2Event(e){
+    this.map.addMarker({
+      title: 'Marcador Inicializado com Mapa',
+      icon: 'green',
+      position: { lat: -30.020290, lng: -51.190161 }
+    }).then((marker2: Marker) => this.onMarkerClick );
+
+    this.map.addMarker({
+      title: 'Marcador Botão',
+      icon: 'blue',
+      draggable: true,
+      position: { lat: -30.020513, lng: -51.192436 }
+    }).then((marker1: Marker) => { this.onMarkerClick });
   }
 
 }
