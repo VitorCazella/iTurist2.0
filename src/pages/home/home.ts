@@ -74,7 +74,7 @@ export class HomePage {
                 "featureType": "road",
                 "elementType": "labels.icon",
                 "stylers": [{"visibility": "off"}]
-              },
+              },.addMarker
               {
                 "featureType": "transit",
                 "stylers": [{"visibility": "off"}]
@@ -88,7 +88,10 @@ export class HomePage {
           return this.map.animateCamera({
             target: myLocation.latLng,
             zoom: 12
-          })
+          });
+          map.addListener('click', function(event) {
+            addMarker(event.latLng);
+          });
         });
 
         this.map.addMarker({
@@ -122,11 +125,16 @@ export class HomePage {
             title: 'Você está aqui!',
             position: myLocation.latLng,
             animation: GoogleMapsAnimation.BOUNCE
+<<<<<<< HEAD
           }).then((markerMain: Marker) => this.onMarkerClick);
+=======
+          }).then(this.onMarkerClick);
+>>>>>>> 15ed15656eb48aea446c1b617851d51b88a257be
         })
       });
   }
 
+<<<<<<< HEAD
   onMarkerClick(marker : Marker){
     marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
       alert("Marcador : " + marker.getTitle());
@@ -146,6 +154,20 @@ export class HomePage {
       draggable: true,
       position: { lat: -30.020513, lng: -51.192436 }
     }).then((marker1: Marker) => { this.onMarkerClick });
+=======
+  onMarkerClick(marker: Marker){
+    marker.one(GoogleMapsEvent.MARKER_CLICK).then(() => {
+      alert(marker.getTitle());
+    });
+  }
+
+  function addMarker(location) {
+    var marker = new google.maps.Marker({
+      position: location,
+      map: map
+    });
+    markers.push(marker);
+>>>>>>> 15ed15656eb48aea446c1b617851d51b88a257be
   }
 
 }
