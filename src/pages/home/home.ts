@@ -21,13 +21,6 @@ export class HomePage {
   map: GoogleMap;
   mapElement: HTMLElement;
 
-  markerMain = new google.maps.Marker({
-      position: myLocation.latLng,
-      icon: 'assets/imgs/avatar.png',
-      title: 'Você está aqui!',
-      animation: GoogleMapsAnimation.BOUNCE
-  });
-
   constructor(public navCtrl: NavController, public GoogleMaps: GoogleMaps) {
 
   }
@@ -38,7 +31,7 @@ export class HomePage {
 
   loadMap(){
     try{
-      LocationService.getMyLocation().then((myLocation: MyLocation) => {
+      LocationService.getMyLocation({ enableHighAccuracy: true }).then((myLocation: MyLocation) => {
         //const latlng = { lat: -30.021136, lng: -51.191369};
 
         this.mapElement = document.getElementById('map');
@@ -58,27 +51,10 @@ export class HomePage {
           },
           styles: [
             {
-                "featureType": "administrative",
-                "elementType": "geometry",
-                "stylers": [{"visibility": "off"}]
-              },
-              {
-                "featureType": "poi",
-                "stylers": [{"visibility": "on"}]
-              },
-              {
-                "featureType": "poi",
-                "elementType": "labels.icon"
-              },
-              {
-                "featureType": "road",
-                "elementType": "labels.icon",
-                "stylers": [{"visibility": "off"}]
-              },.addMarker
-              {
-                "featureType": "transit",
-                "stylers": [{"visibility": "off"}]
-              }
+              featureType: 'poi',
+              elementType: 'labels',
+              stylers: [{visibility: 'off'}]
+            }
           ]
         }
 
@@ -87,20 +63,18 @@ export class HomePage {
         this.map.one(GoogleMapsEvent.MAP_READY).then(() => {
           return this.map.animateCamera({
             target: myLocation.latLng,
-            zoom: 12
-          });
-          map.addListener('click', function(event) {
-            addMarker(event.latLng);
-          });
+            zoom: 14
+          })
         });
 
-        this.map.addMarker({
+        /*var marker2 = this.map.addMarker({
           title: 'Marcador Inicializado com Mapa',
           icon: 'green',
-          position: { lat: -30.020290, lng: -51.190161 }
-        }).then((marker2: Marker) => this.onMarkerClick );
+          position: { lat: -30.020036, lng: -51.191368 }
+        }).then((marker2: Marker) => {
+          this.onMarkerClick(marker2);
+        });*/
 
-        this.markerMain.setMap(this.map);
       });
     } catch(error){
       alert("Map Error " + error);
@@ -108,7 +82,7 @@ export class HomePage {
   }
 
   tapEvent(e) {
-    this.markerMain.setMap(null);
+    
 
     // Get the location of you
     this.map.getMyLocation().then((myLocation: MyLocation) => {
@@ -116,7 +90,8 @@ export class HomePage {
         // Move the map camera to the location with animation
         return this.map.animateCamera({
           target: myLocation.latLng,
-          zoom: 15,
+          zoom: 16,
+          tilt: 0,
           duration: 500
         }).then(() => {
           // add a marker
@@ -125,49 +100,61 @@ export class HomePage {
             title: 'Você está aqui!',
             position: myLocation.latLng,
             animation: GoogleMapsAnimation.BOUNCE
-<<<<<<< HEAD
-          }).then((markerMain: Marker) => this.onMarkerClick);
-=======
-          }).then(this.onMarkerClick);
->>>>>>> 15ed15656eb48aea446c1b617851d51b88a257be
+          }).then((markerMain: Marker) => {
+            this.onMarkerClick(markerMain);
+          });
         })
       });
-  }
 
-<<<<<<< HEAD
-  onMarkerClick(marker : Marker){
-    marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
-      alert("Marcador : " + marker.getTitle());
-    });
   }
 
   tap2Event(e){
     this.map.addMarker({
-      title: 'Marcador Inicializado com Mapa',
+      title: 'Recriado Marcador Inicializado com Mapa',
       icon: 'green',
       position: { lat: -30.020290, lng: -51.190161 }
-    }).then((marker2: Marker) => this.onMarkerClick );
+    }).then((marker3: Marker) => {
+      this.onMarkerClick(marker3);
+    });
 
     this.map.addMarker({
       title: 'Marcador Botão',
       icon: 'blue',
       draggable: true,
       position: { lat: -30.020513, lng: -51.192436 }
-    }).then((marker1: Marker) => { this.onMarkerClick });
-=======
-  onMarkerClick(marker: Marker){
-    marker.one(GoogleMapsEvent.MARKER_CLICK).then(() => {
-      alert(marker.getTitle());
+    }).then((marker4: Marker) => {
+      this.onMarkerClick(marker4);
     });
   }
 
-  function addMarker(location) {
-    var marker = new google.maps.Marker({
-      position: location,
-      map: map
+  tapTilt2(e){
+    var target = this.map.getCameraTarget();
+
+    return this.map.animateCamera({
+      target: target,
+      tilt: 0,
+      duration: 1000
     });
-    markers.push(marker);
->>>>>>> 15ed15656eb48aea446c1b617851d51b88a257be
+  }
+
+  tapTilt(e){
+    var target = this.map.getCameraTarget();
+
+    return this.map.animateCamera({
+      target: target,
+      tilt: 60,
+      duration: 1000
+    });
+  }
+
+  onMarkerClick(marker : Marker){
+    marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
+      alert("Marcador : " + marker.getTitle());
+    });
+  };
+
+  deleteMarker(marker : Marker){
+    marker.remove();
   }
 
 }
