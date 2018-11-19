@@ -3,7 +3,10 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>iTurist</ion-title>
+    <ion-title float-left>iTurist</ion-title>
+    <button ion-button float-right (click)="openPage(Mapa)">
+      <ion-icon name="md-refresh"></ion-icon>
+    </button>
   </ion-navbar>
 </ion-header>
 
@@ -20,8 +23,8 @@
     <ion-fab right top>
       <button ion-fab color="light" mini><ion-icon name="md-apps"></ion-icon></button>
       <ion-fab-list side="bottom">
-        <button ion-fab><ion-icon name="ios-arrow-round-down" (tap)="tapTilt($event)"></ion-icon></button>
         <button ion-fab><ion-icon name="ios-arrow-round-up" (tap)="tapTilt2($event)"></ion-icon></button>
+        <button ion-fab><ion-icon name="ios-arrow-round-down" (tap)="tapTilt($event)"></ion-icon></button>
       </ion-fab-list>
     </ion-fab>
   </div>

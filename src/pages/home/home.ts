@@ -1,15 +1,27 @@
-import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
+import {
+  Component,
+  ComponentRef,
+  Injector,
+  ApplicationRef,
+  ComponentFactoryResolver,
+  NgZone,
+  ElementRef,
+  ViewChild
+} from '@angular/core';
 
 import {
   GoogleMaps,
   GoogleMap,
   GoogleMapsEvent,
   GoogleMapOptions,
+  BaseArrayClass,
   LocationService,
   MyLocation,
   Marker,
-  GoogleMapsAnimation
+  MarkerOptions,
+  GoogleMapsAnimation,
+  HtmlInfoWindow
 } from '@ionic-native/google-maps';
 
 @Component({
@@ -44,7 +56,7 @@ export class HomePage {
           controls: {
             'compass': true,
             'myLocationButton': false,
-            'myLocation': false,   // (blue dot)
+            'myLocation': true,   // (blue dot)
             'indoorPicker': true,
             'zoom': false,          // android only
             'mapToolbar': false     // android only
@@ -64,7 +76,7 @@ export class HomePage {
           return this.map.animateCamera({
             target: myLocation.latLng,
             zoom: 14
-          })
+          });
         });
 
         /*var marker2 = this.map.addMarker({
@@ -72,7 +84,7 @@ export class HomePage {
           icon: 'green',
           position: { lat: -30.020036, lng: -51.191368 }
         }).then((marker2: Marker) => {
-          this.onMarkerClick(marker2);
+          this.onMarkerClickHtml(marker2);
         });*/
 
       });
@@ -82,8 +94,7 @@ export class HomePage {
   }
 
   tapEvent(e) {
-    
-
+    this.map.clear();
     // Get the location of you
     this.map.getMyLocation().then((myLocation: MyLocation) => {
 
@@ -93,17 +104,7 @@ export class HomePage {
           zoom: 16,
           tilt: 0,
           duration: 500
-        }).then(() => {
-          // add a marker
-          return this.map.addMarker({
-            icon: 'assets/imgs/avatar.png',
-            title: 'Você está aqui!',
-            position: myLocation.latLng,
-            animation: GoogleMapsAnimation.BOUNCE
-          }).then((markerMain: Marker) => {
-            this.onMarkerClick(markerMain);
-          });
-        })
+        });
       });
 
   }
@@ -114,7 +115,7 @@ export class HomePage {
       icon: 'green',
       position: { lat: -30.020290, lng: -51.190161 }
     }).then((marker3: Marker) => {
-      this.onMarkerClick(marker3);
+      this.onMarkerClickHtml(marker3);
     });
 
     this.map.addMarker({
@@ -123,7 +124,7 @@ export class HomePage {
       draggable: true,
       position: { lat: -30.020513, lng: -51.192436 }
     }).then((marker4: Marker) => {
-      this.onMarkerClick(marker4);
+      this.onMarkerClickHtml(marker4);
     });
   }
 
@@ -147,9 +148,26 @@ export class HomePage {
     });
   }
 
-  onMarkerClick(marker : Marker){
+  onMarkerClickHtml(marker : Marker){
+    let htmlInfoWindow = new HtmlInfoWindow();
+    let frame: HTMLElement = document.createElement('div');
+    frame.innerHTML = [
+      '<h3>' + marker.getTitle() + '</h3>',
+      '<img src="assets/imgs/logo.png" style="height: 50%;width: 50%">',
+      '<button ion-button color="blue" round>Azul</button>',
+      '<button ion-button color="red" round>Vermelho</button>'
+    ].join("");
+    frame.getElementsByTagName("button")[0].addEventListener('click', () => {
+      htmlInfoWindow.setBackgroundColor('blue');
+    });
+    frame.getElementsByTagName("button")[1].addEventListener('click', () => {
+      htmlInfoWindow.setBackgroundColor('red');
+    });
+    htmlInfoWindow.setContent(frame, {width: '300px', height: '250px'});
+
     marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
-      alert("Marcador : " + marker.getTitle());
+      marker.hideInfoWindow();
+      htmlInfoWindow.open(marker);
     });
   };
 
