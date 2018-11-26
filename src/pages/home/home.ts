@@ -27,14 +27,22 @@ import {
   ILatLng
 } from '@ionic-native/google-maps';
 
+declare var google;
+
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
 export class HomePage {
 
+  @ViewChild('map') mapElement: HTMLElement;
   map: GoogleMap;
-  mapElement: HTMLElement;
+
+  start = 'chicago, il';
+  end = 'chicago, il';
+
+  directionsService = new google.maps.DirectionsService;
+  directionsDisplay = new google.maps.DirectionsRenderer;
 
   constructor(public navCtrl: NavController, public GoogleMaps: GoogleMaps) {
 
@@ -59,7 +67,7 @@ export class HomePage {
           controls: {
             'compass': false,
             'myLocationButton': false,
-            'myLocation': true,   // (blue dot)
+            'myLocation': true,     // (blue dot)
             'indoorPicker': true,
             'zoom': false,          // android only
             'mapToolbar': false     // android only
@@ -80,6 +88,8 @@ export class HomePage {
         }
 
         this.map = GoogleMaps.create(this.mapElement, GoogleMapOption);
+
+        this.directionsDisplay.setMap(this.mapElement);
 
         this.map.one(GoogleMapsEvent.MAP_READY).then(() => {
           this.markerCreate();
@@ -179,18 +189,32 @@ export class HomePage {
 
   setRoute(marker: any) {
     this.map.getMyLocation().then((myLocation: MyLocation) => {
-      let MYLOCATION: ILatLng = myLocation.latLng;
-      let PONTO: ILatLng = marker;
-      let ROUTE: ILatLng[] = [ MYLOCATION, PONTO ];
-
-      let options: PolylineOptions = {
-        points: ROUTE,
-        weight: 1,
-        color: '#AA00FF'
-      };
-
-      this.map.addPolyline(options).then((polyline: Polyline) => { });
-
+      this.directionsService.route({
+        origin: myLocation.latLng,
+        destination: marker.getPosition(),
+        travelMode: 'DRIVING'
+      }, (response, status) => {
+        if (status === 'OK') {
+          this.directionsDisplay.setDirections(response);
+        } else {
+          window.alert('Directions request failed due to ' + status);
+        }
+      });
     });
   }
+
+  calculateAndDisplayRoute() {
+    this.directionsService.route({
+      origin: this.start,
+      destination: this.end,
+      travelMode: 'DRIVING'
+    }, (response, status) => {
+      if (status === 'OK') {
+        this.directionsDisplay.setDirections(response);
+      } else {
+        window.alert('Directions request failed due to ' + status);
+      }
+    });
+  }
+
 }
