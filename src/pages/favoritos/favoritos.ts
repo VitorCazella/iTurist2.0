@@ -1,48 +1,63 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Component } from '@angular/core';
+import { IonicPage } from 'ionic-angular';
 
 declare var google;
 
 @IonicPage()
 @Component({
-  selector: 'page-favoritos',
+  selector: 'FavoritosPage',
   templateUrl: 'favoritos.html',
 })
 export class FavoritosPage {
-
-  @ViewChild('map') mapElement: ElementRef;
+  directionsService = new google.maps.DirectionsService();
+  directionsDisplay = new google.maps.DirectionsRenderer();
   map: any;
-  directionsService = new google.maps.DirectionsService;
-  directionsDisplay = new google.maps.DirectionsRenderer;
+  startPosition: any;
+  originPosition: string;
+  destinationPosition: string;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
-  }
+  constructor() { }
 
   ionViewDidLoad() {
-    this.initMap();
+    this.initializeMap();
   }
 
-  initMap() {
-    this.map = new google.maps.Map(this.mapElement.nativeElement, {
-      zoom: 7,
-      center: [{lat: -30.021899, lng: -51.185318},{lat: -30.019326, lng: -51.192667}]
-    });
+  initializeMap() {
+    this.startPosition = new google.maps.LatLng(-21.763409, -43.349034);
 
+    const mapOptions = {
+      zoom: 18,
+      center: this.startPosition,
+      disableDefaultUI: true
+    }
+
+    this.map = new google.maps.Map(document.getElementById('map'), mapOptions);
     this.directionsDisplay.setMap(this.map);
+
+    const marker = new google.maps.Marker({
+      position: this.startPosition,
+      map: this.map,
+    });
   }
 
-  calculateAndDisplayRoute() {
-    this.directionsService.route({
-      origin: {lat: -30.021899, lng: -51.185318},
-      destination: {lat: -30.019326, lng: -51.192667},
-      travelMode: 'DRIVING'
-    }, (response, status) => {
-      if (status === 'OK') {
-        this.directionsDisplay.setDirections(response);
-      } else {
-        window.alert('Directions request failed due to ' + status);
+  calculateRoute() {
+    if (this.destinationPosition && this.originPosition) {
+      const request = {
+        // Pode ser uma coordenada (LatLng), uma string ou um lugar
+        origin: this.originPosition,
+        destination: this.destinationPosition,
+        travelMode: 'DRIVING'
+      };
+
+      this.traceRoute(this.directionsService, this.directionsDisplay, request);
+    }
+  }
+
+  traceRoute(service: any, display: any, request: any) {
+    service.route(request, function (result, status) {
+      if (status == 'OK') {
+        display.setDirections(result);
       }
     });
   }
-
 }
