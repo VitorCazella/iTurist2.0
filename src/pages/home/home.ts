@@ -38,9 +38,6 @@ export class HomePage {
   @ViewChild('map') mapElement: HTMLElement;
   map: GoogleMap;
 
-  start = 'chicago, il';
-  end = 'chicago, il';
-
   directionsService = new google.maps.DirectionsService;
   directionsDisplay = new google.maps.DirectionsRenderer;
 
@@ -174,7 +171,7 @@ export class HomePage {
       '<button class="myButton">Rota</button>'
     ].join("");
     frame.getElementsByTagName("button")[0].addEventListener('click', () => {
-      this.setRoute(marker.getPosition());
+      this.setLine(marker.getPosition());
     });
     htmlInfoWindow.setContent(frame, {width: '300px', height: '250px'});
 
@@ -185,6 +182,20 @@ export class HomePage {
 
   deleteMarker(marker : Marker){
     marker.remove();
+  }
+
+  setLine(marker: any){
+    this.map.getMyLocation().then((myLocation: MyLocation) => {
+      let MYLOCATION: ILatLng = myLocation.latLng;
+      let PONTO: ILatLng = marker;
+      let ROUTE: ILatLng[] = [ MYLOCATION, PONTO ];
+       let options: PolylineOptions = {
+        points: ROUTE,
+        weight: 1,
+        color: '#AA00FF'
+      };
+       this.map.addPolyline(options).then((polyline: Polyline) => { });
+     });
   }
 
   setRoute(marker: any) {
